@@ -217,3 +217,118 @@ table.mro-table tbody td strong { color: #2c444e; }
 .btn-danger { background:#faece9; color:#ad5148; border:1px solid #efcfca; }
 .btn-danger:hover { background:#f5deda; }
 @media(max-width:650px){.form-grid{grid-template-columns:1fr;}}
+
+/* Operations dashboard polish and compact-screen navigation */
+.top-nav { background: rgba(255,255,255,.97); }
+.app-content { min-width: 0; background: linear-gradient(145deg, #f6f8f7 0%, #f0f4f2 100%); }
+.section-title { letter-spacing: -.045em; }
+.kpi-card, .chart-card, .table-card { box-shadow: 0 5px 18px rgba(31,57,65,.045); }
+.kpi-card { border-radius: 15px; }
+.kpi-card::before { width: 42px; }
+.chart-card { border-radius: 15px; }
+.table-card { border-radius: 14px; }
+.btn:focus-visible, .nav-item:focus-visible, .sidebar-toggle:focus-visible, .modal-close-btn:focus-visible {
+  outline: 3px solid rgba(22,135,125,.35);
+  outline-offset: 2px;
+}
+.overview-heading {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 166px;
+  padding: 25px 27px;
+  margin-bottom: 20px;
+  border: 0;
+  border-radius: 17px;
+  background: linear-gradient(112deg, #183d49 0%, #1d5b61 68%, #2b7774 100%);
+  box-shadow: 0 12px 28px rgba(24,61,73,.16);
+}
+.overview-heading::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 250px;
+  height: 250px;
+  right: 20%;
+  top: -165px;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 50%;
+  box-shadow: 0 0 0 28px rgba(255,255,255,.035), 0 0 0 58px rgba(255,255,255,.025);
+}
+.overview-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #b7d9d4;
+  font-size: .64rem;
+  font-weight: 750;
+  letter-spacing: .13em;
+}
+.overview-kicker span { width: 3px; height: 3px; border-radius: 50%; background: #84d1bd; }
+.overview-heading .section-title { color: #fff; font-size: 1.65rem; }
+.overview-heading .section-subtitle { color: #c4d9d9; margin-top: 6px; }
+.overview-actions { display: flex; align-items: center; gap: 18px; }
+.overview-sync { display: flex; align-items: center; gap: 9px; color: #e5f1ee; font-size: .72rem; white-space: nowrap; }
+.overview-sync strong, .overview-sync small { display: block; }
+.overview-sync small { margin-top: 2px; color: #b7d1cf; font-size: .66rem; }
+.live-indicator { width: 8px; height: 8px; border-radius: 50%; background: #77d2a9; box-shadow: 0 0 0 4px rgba(119,210,169,.15); }
+.overview-heading .btn-primary { background: #fff; color: #205b5d; box-shadow: 0 3px 10px rgba(10,38,43,.15); }
+.overview-heading .btn-primary:hover { background: #eaf5f1; }
+.sidebar-toggle, .sidebar-backdrop { display: none; }
+
+@media (max-width: 720px) {
+  .top-nav { position: sticky; top: 0; z-index: 60; align-items: center; min-height: 62px; }
+  .charts-grid > * { min-width: 0; }
+  .chart-card canvas { max-width: 100%; }
+  .sidebar-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 9px;
+    background: #fff;
+    color: #36545b;
+    cursor: pointer;
+  }
+  .brand-section { flex: 1; }
+  .app-sidebar {
+    position: fixed;
+    top: 62px;
+    bottom: 0;
+    left: 0;
+    z-index: 55;
+    width: min(290px, 84vw);
+    padding: 12px 10px 0;
+    transform: translateX(-105%);
+    transition: transform .22s ease;
+    box-shadow: 12px 0 28px rgba(18,39,47,.17);
+  }
+  .app-sidebar.open { transform: translateX(0); }
+  .app-sidebar .nav-group-title, .app-sidebar .nav-item span, .app-sidebar .sidebar-footer { display: initial; }
+  .app-sidebar .nav-group-title { display: block; }
+  .app-sidebar .sidebar-footer { display: block; }
+  .app-sidebar .nav-item { justify-content: flex-start; padding: 10px 12px; }
+  .sidebar-backdrop.active {
+    display: block;
+    position: fixed;
+    inset: 62px 0 0;
+    z-index: 54;
+    border: 0;
+    background: rgba(14,32,39,.42);
+  }
+  .overview-heading { padding: 21px; gap: 17px; }
+  .overview-heading .section-title { font-size: 1.42rem; }
+  .overview-actions { justify-content: space-between; width: 100%; }
+}
+@media (max-width: 430px) {
+  .overview-heading { padding: 18px; }
+  .overview-actions { align-items: flex-start; flex-direction: column; gap: 13px; }
+  .overview-heading .btn { width: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

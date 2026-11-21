@@ -15,6 +15,7 @@ const FlightFix = {
 document.addEventListener('DOMContentLoaded', () => {
   initClock();
   initNavigation();
+  initMobileSidebar();
   loadOverviewMetrics();
   loadAllModuleData();
   initModalListeners();
@@ -39,8 +40,40 @@ function initNavigation() {
     item.addEventListener('click', () => {
       const targetModule = item.dataset.module;
       switchModule(targetModule);
+      closeMobileSidebar();
     });
   });
+}
+
+function initMobileSidebar() {
+  const toggle = document.getElementById('sidebar-toggle');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  if (!toggle || !backdrop) return;
+
+  toggle.addEventListener('click', () => {
+    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+    setMobileSidebarOpen(!isOpen);
+  });
+  backdrop.addEventListener('click', closeMobileSidebar);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closeMobileSidebar();
+  });
+}
+
+function setMobileSidebarOpen(isOpen) {
+  const sidebar = document.getElementById('app-sidebar');
+  const toggle = document.getElementById('sidebar-toggle');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  if (!sidebar || !toggle || !backdrop) return;
+
+  sidebar.classList.toggle('open', isOpen);
+  backdrop.classList.toggle('active', isOpen);
+  toggle.setAttribute('aria-expanded', String(isOpen));
+  toggle.setAttribute('aria-label', isOpen ? 'Close navigation' : 'Open navigation');
+}
+
+function closeMobileSidebar() {
+  setMobileSidebarOpen(false);
 }
 
 function switchModule(moduleKey) {
@@ -134,7 +167,14 @@ async function loadOverviewMetrics() {
 
     // Render Charts
     renderOverviewCharts(fleetData, kpiData);
+    safeSetText('overview-status', 'Operations online');
+    safeSetText('overview-updated', `Updated ${new Intl.DateTimeFormat('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'UTC'
+    }).format(new Date())} UTC`);
   } catch (err) {
+    safeSetText('overview-status', 'Data sync unavailable');
     console.error('Error fetching dashboard overview:', err);
   }
 }
