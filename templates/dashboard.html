@@ -1,0 +1,664 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title }}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-nav">
+    <div class="brand-section">
+      <div class="logo-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/>
+        </svg>
+      </div>
+      <div class="brand-title">
+        FlightFix <span class="sub">Aircraft Maintenance Management</span>
+      </div>
+    </div>
+
+    <div class="top-telemetry">
+      <div class="hud-pill">
+        <div class="dot"></div>
+        <span>FlightFix <strong>Operations Workspace</strong></span>
+      </div>
+
+      <div class="hud-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span id="utc-clock">--:--:-- UTC</span>
+      </div>
+
+      <div class="user-profile-badge">
+        <div class="avatar-circle">FF</div>
+        <div>
+          <div style="font-size:0.78rem; font-weight:600;">FlightFix Operations</div>
+          <div style="font-size:0.67rem; color:var(--text-muted);">Maintenance Control Centre</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- App Body Layout -->
+  <div class="app-container">
+    
+    <!-- Left Navigation Sidebar -->
+    <aside class="app-sidebar">
+      <div class="nav-group-title">Command & Overview</div>
+      <ul class="nav-links">
+        <li class="nav-item active" data-module="overview">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>Operations Dashboard</span>
+        </li>
+      </ul>
+
+      <div class="nav-group-title">Maintenance & Fleet</div>
+      <ul class="nav-links">
+        <li class="nav-item" data-module="planning">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <span>Maintenance Planning</span>
+        </li>
+        <li class="nav-item" data-module="workorders">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span>Work Orders & Tasks</span>
+        </li>
+        <li class="nav-item" data-module="fleet">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          <span>Aircraft Fleet & GSE</span>
+        </li>
+        <li class="nav-item" data-module="inventory">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          <span>Spare Parts & Stock</span>
+        </li>
+        <li class="nav-item" data-module="execution">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          <span>Execution & Defect Log</span>
+        </li>
+      </ul>
+
+      <div class="nav-group-title">Logistics & Compliance</div>
+      <ul class="nav-links">
+        <li class="nav-item" data-module="compliance">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>Airworthiness Directives</span>
+        </li>
+        <li class="nav-item" data-module="supplychain">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+          <span>Procurement & Orders</span>
+        </li>
+        <li class="nav-item" data-module="analytics">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          <span>Engine & Fleet Health</span>
+        </li>
+        <li class="nav-item" data-module="audit">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Audit Logs & Security</span>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div><strong>FlightFix</strong> MRO System</div>
+        <div>Aviation Maintenance Engineering</div>
+      </div>
+    </aside>
+
+    <!-- Main View Content Area -->
+    <main class="app-content">
+
+      <!-- ======================================================== -->
+      <!-- PANE 0: OPERATIONS DASHBOARD                             -->
+      <!-- ======================================================== -->
+      <section id="pane-overview" class="module-content-pane active">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Operations Command Center</h1>
+            <p class="section-subtitle">Real-time fleet readiness, ongoing work orders, and health analytics across DEL Hub.</p>
+          </div>
+          <button class="btn btn-primary" onclick="loadOverviewMetrics()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            Refresh Data
+          </button>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card success">
+            <span class="kpi-label">Fleet Readiness</span>
+            <div class="kpi-value" id="dash-fleet-readiness">--%</div>
+            <span class="kpi-subtext">Commercial airworthy status</span>
+          </div>
+
+          <div class="kpi-card danger">
+            <span class="kpi-label">Active AOG Critical</span>
+            <div class="kpi-value" id="dash-aog-count" style="color:var(--color-danger);">1</div>
+            <span class="kpi-subtext">Aircraft on Ground (VT-AOG)</span>
+          </div>
+
+          <div class="kpi-card warning">
+            <span class="kpi-label">Active Work Orders</span>
+            <div class="kpi-value" id="dash-active-wo">--</div>
+            <span class="kpi-subtext">Open & In-Progress tasks</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Dispatch Reliability</span>
+            <div class="kpi-value" id="dash-dispatch-rel">99.4%</div>
+            <span class="kpi-subtext">Target: &gt;99.0%</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Fleet MTBF</span>
+            <div class="kpi-value" id="dash-mtbf">438 hrs</div>
+            <span class="kpi-subtext">Mean flight hours between removals</span>
+          </div>
+        </div>
+
+        <!-- Live Charts -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-title">
+              <span>Fleet Operational Status</span>
+              <span class="badge badge-blue">Active Fleet</span>
+            </div>
+            <div style="height: 240px;">
+              <canvas id="chartFleetStatus"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-title">
+              <span>Reliability & Early Catch Trend</span>
+              <span class="badge badge-green">Monthly</span>
+            </div>
+            <div style="height: 240px;">
+              <canvas id="chartReliability"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- PANE 1: MAINTENANCE PLANNING                             -->
+      <!-- ======================================================== -->
+      <section id="pane-planning" class="module-content-pane">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Maintenance Planning & Scheduling</h1>
+            <p class="section-subtitle">Forecast check intervals (A, B, C, D-Checks), assign hangar bays, and track scheduled maintenance.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-primary" onclick="addMaintenanceSchedule()">+ Add Schedule</button><button class="btn btn-secondary" onclick="loadPlanningData()">Refresh Schedules</button></div>
+        </div>
+
+        <div class="toolbar-card">
+          <div class="search-box">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" placeholder="Search schedule ID, tail number, check type..." onkeyup="filterTable(this, 'table-planning-body')">
+          </div>
+          <div class="toolbar-actions">
+            <span class="badge badge-gray">Hangar Bays: HB-01 (Occupied), HB-02 (Occupied), HB-03 (Available)</span>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="mro-table">
+              <thead>
+                <tr>
+                  <th>Schedule ID</th>
+                  <th>Aircraft</th>
+                  <th>Check Type</th>
+                  <th>Hangar Bay</th>
+                  <th>Scheduled Start</th>
+                  <th>Scheduled End</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="table-planning-body">
+                <tr><td colspan="8" class="text-muted">Loading maintenance schedules...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- PANE 2: WORK ORDER MANAGEMENT                            -->
+      <!-- ======================================================== -->
+      <section id="pane-workorders" class="module-content-pane">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Work Orders & Job Management</h1>
+            <p class="section-subtitle">Manage maintenance job orders, assign labor hours, track AOG snags, and issue CRS releases.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-primary" onclick="addWorkOrder()">+ Add Work Order</button><button class="btn btn-secondary" onclick="loadWorkOrdersData()">Refresh Work Orders</button></div>
+        </div>
+
+        <div class="toolbar-card">
+          <div class="search-box">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" placeholder="Search work order #, title, priority..." onkeyup="filterTable(this, 'table-workorders-body')">
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="mro-table">
+              <thead>
+                <tr>
+                  <th>WO Number</th>
+                  <th>Aircraft</th>
+                  <th>Title & Description</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Labor (Actual / Est)</th>
+                  <th>Release Action</th>
+                </tr>
+              </thead>
+              <tbody id="table-workorders-body">
+                <tr><td colspan="7" class="text-muted">Loading work orders...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- PANE 3: AIRCRAFT & EQUIPMENT MANAGEMENT                  -->
+      <!-- ======================================================== -->
+      <section id="pane-fleet" class="module-content-pane">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Aircraft Fleet & Equipment Registry</h1>
+            <p class="section-subtitle">Commercial fleet registry, flight hours/cycles, and Ground Support Equipment (GSE) calibration.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-primary" onclick="addAircraft()">+ Add Aircraft</button><button class="btn btn-secondary" onclick="loadFleetData()">Refresh Fleet</button></div>
+        </div>
+
+        <div id="fleet-aircraft-cards" class="kpi-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- PANE 4: SPARE PARTS INVENTORY                            -->
+      <!-- ======================================================== -->
+      <section id="pane-inventory" class="module-content-pane">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Spare Parts Inventory & Stores</h1>
+            <p class="section-subtitle">Aeronautical part stores, bin locations, minimum safety stock, and issuance to work orders.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-primary" onclick="addSparePart()">+ Add Spare Part</button><button class="btn btn-secondary" onclick="loadInventoryData()">Refresh Inventory</button></div>
+        </div>
+
+        <div class="toolbar-card">
+          <div class="search-box">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" placeholder="Search part number, description, bin location..." onkeyup="filterTable(this, 'table-inventory-body')">
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="mro-table">
+              <thead>
+                <tr>
+                  <th>Part Number</th>
+                  <th>Description & Category</th>
+                  <th>Stock On-Hand</th>
+                  <th>Safety / Reorder</th>
+                  <th>Bin Location</th>
+                  <th>Unit Cost</th>
+                  <th>Condition</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="table-inventory-body">
+                <tr><td colspan="8" class="text-muted">Loading spare parts...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- PANE 5: EXECUTION & DEFECT LOGS                          -->
+      <!-- ======================================================== -->
+      <section id="pane-execution" class="module-content-pane">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Maintenance Execution & Defect Logs</h1>
+            <p class="section-subtitle">AMM task compliance, technician step-by-step sign-offs, and pilot/maintenance defect reporting.</p>
+          </div>
+          <button class="btn btn-secondary" onclick="loadExecutionData()">Refresh Records</button>
+        </div>
+
+        <h3 style="font-size:0.95rem; font-weight:600; margin-bottom:10px;">Active Job Cards & AMM Task Compliance</h3>
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="mro-table">
+              <thead>
+                <tr>
+                  <th>Job Card / Step</th>
+                  <th>Instruction & AMM Clause</th>
+                  <th>Technician Stamp</th>
+                  <th>Inspector Stamp</th>
+                </tr>
+              </thead>
+              <tbody id="table-jobcards-body">
+                <tr><td colspan="4" class="text-muted">Loading job cards...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="chart-card" style="margin:18px 0;">
+          <div class="chart-title"><span>Report an Aircraft Problem</span><span class="badge badge-blue">New Request</span></div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Aircraft</label><select id="issue-aircraft" class="form-control"></select></div>
+            <div class="form-group"><label class="form-label">Issue Title</label><input id="issue-title" class="form-control" placeholder="e.g. Hydraulic leakage"></div>
+            <div class="form-group"><label class="form-label">Severity</label><select id="issue-severity" class="form-control"><option value="MINOR_MEL">Minor</option><option value="MAJOR" selected>Major</option><option value="AOG">Critical / AOG</option></select></div>
+            <div class="form-group"><label class="form-label">Reported By</label><input id="issue-reporter" class="form-control" placeholder="Your name"></div>
+            <div class="form-group" style="grid-column:1/-1"><label class="form-label">Problem Details</label><textarea id="issue-details" class="form-control" rows="3" placeholder="Describe the aircraft problem..."></textarea></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn btn-primary" onclick="submitAircraftIssue()">Submit Issue</button></div>
+        </div>
+        <h3 style="font-size:0.95rem; font-weight:600; margin:20px 0 10px;">Discrepancy & Defect Logbook (PIREP / MAREP)</h3>
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="mro-table">
+              <thead>
+                <tr>
+                  <th>Log Number</th>
+                  <th>Aircraft</th>
+                  <th>Defect Summary</th>
+                  <th>Severity</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="table-defects-body">
+                <tr><td colspan="6" class="text-muted">Loading defect logs...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- PANE 6: COMPLIANCE MANAGEMENT                            -->
+      <!-- ======================================================== -->
+      <section id="pane-compliance" class="module-content-pane">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Airworthiness & Regulatory Compliance</h1>
+            <p class="section-subtitle">Mandatory Airworthiness Directives (FAA / EASA / DGCA), Service Bulletins, and AME License validation.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-primary" onclick="addDirective()">+ Add Directive</button><button class="btn btn-secondary" onclick="loadComplianceData()">Refresh Directives</button></div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="mro-table">
+              <thead>
+                <tr>
+                  <th>Directive #</th>
+                  <th>Authority</th>
+                  <th>Title & Applicability</th>
+                  <th>Deadline</th>
+                  <th>Recurring?</th>
+                  <th>Compliance Status</th>
+                  <th>Certification</th>
+                </tr>
+              </thead>
+              <tbody id="table-compliance-body">
+                <tr><td colspan="7" class="text-muted">Loading airworthiness directives...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- PANE 7: ERP & SUPPLY CHAIN                               -->
+      <!-- ======================================================== -->
+      <section id="pane-supplychain" class="module-content-pane">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Procurement & Supply Chain Management</h1>
+            <p class="section-subtitle">Integration with enterprise ERP (SAP / Oracle), purchase orders, AOG freight tracking, and customs clearance.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-primary" onclick="addVendor()">+ Add Vendor</button><button class="btn btn-secondary" onclick="loadSupplyChainData()">Refresh Orders</button></div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="mro-table">
+              <thead>
+                <tr>
+                  <th>PO Number</th>
+                  <th>Vendor & ERP Reference</th>
+                  <th>Total Amount</th>
+                  <th>Status</th>
+                  <th>Shipping & AWB</th>
+                  <th>Expected Delivery</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="table-supplychain-body">
+                <tr><td colspan="7" class="text-muted">Loading purchase orders...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- PANE 9: PREDICTIVE DIAGNOSTICS & TELEMETRY               -->
+      <!-- ======================================================== -->
+      <section id="pane-analytics" class="module-content-pane">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Fleet Reliability & Sensor Diagnostics</h1>
+            <p class="section-subtitle">Aircraft sensor telemetry, anomaly detection, and preemptive work order generation.</p>
+          </div>
+          <button class="btn btn-secondary" onclick="loadAnalyticsData()">Refresh Anomaly Feed</button>
+        </div>
+
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="mro-table">
+              <thead>
+                <tr>
+                  <th>Alert ID</th>
+                  <th>Aircraft</th>
+                  <th>Component & Recommendation</th>
+                  <th>Failure Risk</th>
+                  <th>Severity</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="table-predictive-body">
+                <tr><td colspan="7" class="text-muted">Loading predictive failure alerts...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- PANE 10: SECURITY & AUDIT TRAIL                          -->
+      <!-- ======================================================== -->
+      <section id="pane-audit" class="module-content-pane">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">System Audit Trail & Security Logs</h1>
+            <p class="section-subtitle">Regulatory audit trail tracking all work order releases, digital stamps, and role authorizations.</p>
+          </div>
+          <button class="btn btn-secondary" onclick="loadAuditData()">Refresh Audit Log</button>
+        </div>
+
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="mro-table">
+              <thead>
+                <tr>
+                  <th>Timestamp (UTC)</th>
+                  <th>Authorized User</th>
+                  <th>Action Type</th>
+                  <th>Target Feature</th>
+                  <th>Entity Reference</th>
+                  <th>Audit Details</th>
+                </tr>
+              </thead>
+              <tbody id="table-audit-body">
+                <tr><td colspan="6" class="text-muted">Loading audit trail...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: RELEASE TO SERVICE (CRS)                             -->
+  <!-- ============================================================ -->
+  <div id="modal-release-crs" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="crs-modal-title" class="modal-title">Release Aircraft to Service (CRS)</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="crs-wo-id">
+        <div class="form-group">
+          <label class="form-label">Certifying Engineer / Inspector</label>
+          <input type="text" id="crs-engineer-name" class="form-control" placeholder="Enter certifying engineer name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Certificate of Release to Service (CRS) Code</label>
+          <input type="text" id="crs-code-input" class="form-control" placeholder="Enter CRS reference code">
+        </div>
+        <p style="font-size:0.73rem; color:var(--text-muted);">
+          By signing, you certify that the work specified has been carried out in accordance with regulatory requirements and the aircraft is ready for commercial flight release.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-close-btn">Cancel</button>
+        <button class="btn btn-success" onclick="submitReleaseCRS()">Sign & Release</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: ADJUST SPARE PART STOCK                              -->
+  <!-- ============================================================ -->
+  <div id="modal-adjust-stock" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="stock-modal-title" class="modal-title">Adjust Part Stock</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="stock-part-id">
+        <div class="form-group">
+          <label class="form-label">Transaction Type</label>
+          <select id="stock-txn-type" class="form-control">
+            <option value="ISSUE_WORK_ORDER">Issue to Work Order (Deduct)</option>
+            <option value="RECEIVE_PO">Goods Receipt / Restock (Add)</option>
+            <option value="RETURN_TO_STORE">Return of Unused Part (Add)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Quantity</label>
+          <input type="number" id="stock-qty-input" class="form-control" value="1" min="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reference Order / Work Order #</label>
+          <input type="text" id="stock-ref-order" class="form-control" value="WO-2026-AOG-01">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-close-btn">Cancel</button>
+        <button class="btn btn-primary" onclick="submitStockAdjustment()">Confirm Transaction</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: DIGITAL TECHNICIAN STAMP                             -->
+  <!-- ============================================================ -->
+  <div id="modal-technician-stamp" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="stamp-modal-title" class="modal-title">Apply Digital Technician Stamp</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="stamp-card-id">
+        <div class="form-group">
+          <label class="form-label">Technician Name</label>
+          <input type="text" id="stamp-tech-name" class="form-control" placeholder="Enter technician name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">AME License / Stamp ID</label>
+          <input type="text" id="stamp-license-code" class="form-control" placeholder="Enter AME license / stamp ID">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-close-btn">Cancel</button>
+        <button class="btn btn-accent" onclick="submitTechnicianStamp()">Sign & Apply Stamp</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: SUBSYSTEMS HEALTH                                    -->
+  <!-- ============================================================ -->
+  <div id="modal-subsystems" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Aircraft Subsystem Telemetry</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div id="subsystems-content" class="modal-body">
+        <!-- Subsystems populated dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- App Script -->
+  <script src="{% static 'js/app.js' %}"></script>
+
+  <script>
+    // Live table search filtering utility
+    function filterTable(input, tableBodyId) {
+      const filter = input.value.toLowerCase();
+      const rows = document.getElementById(tableBodyId).getElementsByTagName('tr');
+      for (let i = 0; i < rows.length; i++) {
+        const text = rows[i].textContent || rows[i].innerText;
+        rows[i].style.display = text.toLowerCase().includes(filter) ? '' : 'none';
+      }
+    }
+  </script>
+</body>
+</html>

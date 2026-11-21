@@ -1,0 +1,25 @@
+FlightFix - CRUD/API fix notes
+
+This package includes the active Django project only. The duplicate "apps - Copy" folder from the supplied ZIP has been excluded because Django settings load apps.* and never use that duplicate folder.
+
+Updates:
+- Added create controls for Maintenance Schedule, Work Order, Airworthiness Directive, and Vendor.
+- Kept Aircraft and Spare Part add/edit/delete controls and the aircraft issue reporting form.
+- Added delete controls for maintenance schedules, work orders, and directives.
+- Improved API response parsing so validation errors are shown in the on-screen toast instead of being hidden as generic failures.
+- Added HTTP status checks to key list-fetch functions so failed API requests are visible in the browser console.
+- JavaScript syntax validated with Node.js.
+
+Run:
+1. Extract this ZIP.
+2. Open the extracted flightfix_project folder in VS Code.
+3. In terminal run: pip install -r requirements.txt
+4. Run: python manage.py migrate
+5. Run: python manage.py runserver
+6. Open: http://127.0.0.1:8000/
+
+Important:
+- Use the project in this ZIP, not the old "apps - Copy" folder.
+- Database file db.sqlite3 is included from the supplied project. Back it up before replacing it with another copy.
+- If the database is empty, run: python manage.py seed_flightfix_data
+- This is an aircraft maintenance demo system. Real aviation maintenance decisions and airworthiness releases must be verified by authorized personnel.
